@@ -2,7 +2,6 @@ import { styled } from '..';
 
 export const HomeContainer = styled('main', {
   display: 'flex',
-  gap: '3rem',
   // backgroundColor: 'red', // só para visualizar o Container durante as mudanças abaixo:
 
   // Forma do container das camisetas/produtos cobrir do centro para a direita da tela, para podermos aplicar o carrossel
@@ -15,7 +14,6 @@ export const HomeContainer = styled('main', {
 export const Product = styled('a', {
   background: 'linear-gradient(100deg, #1EA483 0%, #7465D4 100%)',
   borderRadius: 8,
-  padding: '0.25rem',
   cursor: 'pointer',
   position: 'relative',
   overflow: 'hidden', // Para não enxergar o footer fora no efeito hover
