@@ -1,4 +1,4 @@
-import { GetServerSideProps } from 'next';
+import { GetStaticProps } from 'next';
 import Image from 'next/image';
 
 import { useKeenSlider } from 'keen-slider/react';
@@ -6,8 +6,6 @@ import { useKeenSlider } from 'keen-slider/react';
 import { stripe } from '@/lib/stripe';
 import Stripe from 'stripe';
 import { HomeContainer, Product } from '@/styles/pages/home';
-
-import camiseta1 from '../assets/camisetas/Shirt-1.png';
 
 import 'keen-slider/keen-slider.min.css';
 
@@ -34,20 +32,20 @@ export default function Home({ products }: HomeProps) {
       {products.map(product => {
         return (
           <Product key={product.id} className='keen-slider__slide'>
-        <Image src={product.imageUrl} width={520} height={480} alt='' />
+            <Image src={product.imageUrl} width={520} height={480} alt='' />
 
-        <footer>
-          <strong>{product.name}</strong>
-          <span>{product.price}</span>
-        </footer>
-      </Product>
-        )
+            <footer>
+              <strong>{product.name}</strong>
+              <span>{product.price}</span>
+            </footer>
+          </Product>
+        );
       })}
     </HomeContainer>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getStaticProps: GetStaticProps = async () => { // Só não temos, no Static, o req e o res da requisição, ao contrário de com ServerSideProps
   const response = await stripe.products.list({
     expand: ['data.default_price']
   });
@@ -66,6 +64,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   return {
     props: {
       products,
-    }
+    },
+    revalidate: 60 * 60 * 2, // 2 hours (para chamada para API do Stripe atualizar a página)
   };
 };
