@@ -23,7 +23,7 @@ export const Product = styled('a', {
   justifyContent: 'center',
 
   img: {
-    objectFit: 'cover'
+    objectFit: 'cover' // Não distorce ao carregar com resolução diferente
   },
 
   footer: {
@@ -45,7 +45,7 @@ export const Product = styled('a', {
     opacity: 0,
     transition: 'all 0.2s ease-in-out',
 
-    strong: {
+    strong: { // Estes mais pra dentro não chamam automaticamente os temas... bugado
       fontSize: '$lg',
       color: '$gray100'
     },
@@ -54,7 +54,7 @@ export const Product = styled('a', {
       fontSize: '$xl',
       fontWeight: 'bold',
       color: '$green300',
-    }
+    },
   },
 
   // Esse Hover é combinado com o transform e opacity e transition feitos no footer, para dar um efeito de sobe/desce no footer de preço (com overflow hidden tb)!
