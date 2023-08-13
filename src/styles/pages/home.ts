@@ -11,7 +11,7 @@ export const HomeContainer = styled('main', {
   minHeight: 656,
 });
 
-export const Product = styled('a', {
+export const Product = styled('div', {
   background: 'linear-gradient(100deg, #1EA483 0%, #7465D4 100%)',
   borderRadius: 8,
   cursor: 'pointer',
