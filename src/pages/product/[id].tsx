@@ -1,9 +1,11 @@
-import { stripe } from '@/lib/stripe';
-import { ImageContainer, ProductContainer, ProductDetails } from '@/styles/pages/product';
+import axios from 'axios';
+import { useRouter } from 'next/router';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import Image from 'next/image';
-import { useRouter } from 'next/router';
 import Stripe from 'stripe';
+import { stripe } from '@/lib/stripe';
+import { ImageContainer, ProductContainer, ProductDetails } from '@/styles/pages/product';
+import { useState } from 'react';
 
 interface ProductProps {
   product: {
@@ -17,8 +19,29 @@ interface ProductProps {
 }
 
 export default function Product({ product }: ProductProps) {
-  function handleBuyProduct() {
-    console.log(product.defaultPriceId);
+  // const router = useRouter();
+  const [isCreatingCheckoutSession, setIsCreatingCheckoutSession] = useState(false);
+
+  async function handleBuyProduct() {
+    // console.log(product.defaultPriceId);
+    try {
+      setIsCreatingCheckoutSession(true);
+      // api e Front tão no 3000, então só precisamos do path no axios:
+      const response = await axios.post('/api/checkout', {
+        priceId: product.defaultPriceId,
+      });
+
+      const { checkoutUrl } = response.data;
+
+      // router.push('/checkout') // Como é aplicação externa - lá no stripe - usamos o modelo DOM mesmo:
+      window.location.href = checkoutUrl;
+      // Ao redirecionar para outra página, não se faz necessário re-settar o isCreatingCheckoutSession para false
+    } catch (err) {
+      // Ideal: Conectar com uma ferramenta de observabilidade (Datadog / Sentry)
+      setIsCreatingCheckoutSession(false);
+
+      alert('Falha ao redirecionar ao checkout!');
+    }
   }
 
   const { isFallback } = useRouter();
@@ -39,7 +62,7 @@ export default function Product({ product }: ProductProps) {
 
         <p>{product.description}</p>
 
-        <button onClick={handleBuyProduct}>
+        <button disabled={isCreatingCheckoutSession} onClick={handleBuyProduct}>
           Comprar agora
         </button>
       </ProductDetails>
@@ -49,7 +72,7 @@ export default function Product({ product }: ProductProps) {
 
 export const getStaticPaths: GetStaticPaths = async () => {
   return {
-    paths: [ // Aqui pode ser vazio ou ter os produtos mais acessados já gerados. O restante é gerado durante o fallback, que pode renderizar algo temporário como vemos no hook useRouter do next usado acima.
+    paths: [ // Aqui pode ser vazio ou ter os produtos mais acessados já gerados. O restante é gerado durante o fallback, que pode renderizar algo temporário como vemos no hook useRouter do next, usado acima.
       { params: { id: 'prod_OOFD8hAC5hoicw' } }
     ],
     fallback: true,
